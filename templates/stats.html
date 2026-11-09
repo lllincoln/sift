@@ -1,0 +1,111 @@
+{{define "content"}}
+<div class="stats">
+<h1 class="page-heading">Stats</h1>
+
+<section class="stat-card hero">
+  <div class="hero-main">
+    <span class="stat-label">Time reading</span>
+    <strong class="hero-value">{{duration .AllTime.Seconds}}</strong>
+    <span class="stat-sub">{{duration .Week.Seconds}} this week</span>
+  </div>
+  <dl class="tiles">
+    <div><dt>Articles read</dt><dd>{{.AllTime.Articles}}</dd><dd class="stat-sub">{{.Week.Articles}} this week</dd></div>
+    <div><dt>Likes</dt><dd>{{.AllTime.Likes}}</dd><dd class="stat-sub">{{.AllTime.Dislikes}} dislikes</dd></div>
+    <div><dt>Current streak</dt><dd>{{.CurrentStreak}}d</dd><dd class="stat-sub">best {{.BestStreak}}d</dd></div>
+  </dl>
+</section>
+
+<section class="stat-card">
+  <div class="card-head">
+    <h2 class="section-heading">Reading time, last 30 days</h2>
+    <span class="stat-sub">Peak {{duration .Peak}}</span>
+  </div>
+  <svg class="bars" viewBox="0 0 600 100" role="img" aria-label="Minutes read per day for the last 30 days. The numbers are under Daily numbers.">
+    {{range .Bars}}<g><title>{{.Label}}</title><rect x="{{.Column}}" y="0" width="20" height="100"></rect>{{if .Path}}<path {{.Path}}></path>{{end}}</g>{{end}}
+    <line x1="0" y1="100" x2="600" y2="100"></line>
+  </svg>
+  <div class="bars-axis"><span>{{.FirstDay}}</span><span>{{.LastDay}}</span></div>
+  <details class="more">
+    <summary>Daily numbers</summary>
+    <div class="scroll"><table class="stats-table">
+      <thead><tr><th>Day</th><th>Time</th><th>Articles</th></tr></thead>
+      <tbody>{{range .Bars}}<tr><td>{{.Date}}</td><td>{{duration .Seconds}}</td><td>{{.Articles}}</td></tr>{{end}}</tbody>
+    </table></div>
+  </details>
+</section>
+
+<section class="stat-card">
+  <h2 class="section-heading">By period</h2>
+  <div class="scroll"><table class="stats-table by-period">
+    <thead><tr><th></th>{{range .Periods}}<th>{{.Label}}</th>{{end}}</tr></thead>
+    <tbody>
+      <tr><th>Articles</th>{{range .Periods}}<td>{{.Articles}}</td>{{end}}</tr>
+      <tr><th>Time</th>{{range .Periods}}<td>{{duration .Seconds}}</td>{{end}}</tr>
+      <tr><th>Avg read</th>{{range .Periods}}<td>{{duration .Average}}</td>{{end}}</tr>
+      <tr><th>Likes</th>{{range .Periods}}<td>{{.Likes}}</td>{{end}}</tr>
+      <tr><th>Dislikes</th>{{range .Periods}}<td>{{.Dislikes}}</td>{{end}}</tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="stat-card">
+  <h2 class="section-heading">Habits</h2>
+  <dl class="facts">
+    <div><dt>Days active</dt><dd>{{.ActiveDays}}</dd></div>
+    <div><dt>Per active day</dt><dd>{{duration .PerDay}}</dd></div>
+    <div><dt>Longest read</dt><dd>{{duration .Longest}}</dd></div>
+    <div><dt>Feeds</dt><dd>{{.Feeds}}</dd></div>
+    <div><dt>Stories stored</dt><dd>{{.Stored}}</dd></div>
+    <div><dt>Unread</dt><dd>{{.Unread}}</dd></div>
+  </dl>
+</section>
+
+<section class="stat-card">
+  <h2 class="section-heading">Best sources</h2>
+  {{if .Sources}}
+  <ol class="sources">{{range .Sources}}{{template "source" .}}{{end}}</ol>
+  {{if .SourcesRest}}
+  <details class="more">
+    <summary>All {{.SourceCount}} sources</summary>
+    <ol class="sources">{{range .SourcesRest}}{{template "source" .}}{{end}}</ol>
+  </details>
+  {{end}}
+  {{else}}<p class="stat-empty">Read or rate something to see your sources here.</p>{{end}}
+</section>
+
+{{if .Top}}
+<section class="stat-card">
+  <h2 class="section-heading">Most-read articles</h2>
+  <ol class="articles">{{range .Top}}{{template "article-row" .}}{{end}}</ol>
+  {{if .TopRest}}
+  <details class="more">
+    <summary>Show more</summary>
+    <ol class="articles">{{range .TopRest}}{{template "article-row" .}}{{end}}</ol>
+  </details>
+  {{end}}
+</section>
+{{end}}
+
+{{if .Liked}}
+<details class="stat-card fold">
+  <summary><span class="section-heading">Liked</span><span class="stat-sub">{{len .Liked}}</span></summary>
+  <ul class="articles">{{range .Liked}}<li><a href="{{.Link}}">{{.Title}}</a></li>{{end}}</ul>
+</details>
+{{end}}
+
+{{if .Disliked}}
+<details class="stat-card fold">
+  <summary><span class="section-heading">Disliked</span><span class="stat-sub">{{len .Disliked}}</span></summary>
+  <ul class="articles">{{range .Disliked}}<li><a href="{{.Link}}">{{.Title}}</a></li>{{end}}</ul>
+</details>
+{{end}}
+</div>
+{{end}}
+
+{{define "source"}}<li>
+  <div class="row-line"><span class="row-name">{{.Name}}</span><span class="row-value">{{duration .Seconds}}</span></div>
+  {{if .Share}}<svg class="share" width="100%" height="6" aria-hidden="true"><rect width="{{.Share}}%" height="6" rx="3"></rect></svg>{{end}}
+  <div class="stat-sub">{{.Articles}} read · {{.Likes}} liked · {{.Dislikes}} disliked</div>
+</li>{{end}}
+
+{{define "article-row"}}<li><div class="row-line"><a class="row-name" href="{{.Link}}">{{.Title}}</a><span class="row-value">{{duration .Seconds}}</span></div></li>{{end}}

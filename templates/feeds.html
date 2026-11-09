@@ -1,0 +1,25 @@
+{{define "content"}}
+<h1 class="page-heading">Feeds</h1>
+<form class="add" method="post" action="/feeds">
+  <input type="url" name="url" required placeholder="https://example.com/feed.xml" aria-label="Feed URL" value="{{.FormValue}}">
+  <button class="button">Add</button>
+</form>
+{{if .FormError}}<p class="error">{{.FormError}}</p>{{end}}
+
+<ul class="feeds">
+  {{range .Feeds}}
+  <li>
+    <div class="feed-info">
+      <a class="feed-name" href="/latest?feed={{.ID}}">{{.Name}}</a>
+      <div class="meta">
+        {{host .URL}} · {{.Unread}} unread
+        {{if .Error}}<span class="error">· {{.Error}}</span>{{else}}· fetched {{ago .LastFetch}}{{end}}
+      </div>
+    </div>
+    <form method="post" action="/feeds/{{.ID}}/delete"><button class="link danger" aria-label="Remove {{.Name}}">Remove</button></form>
+  </li>
+  {{else}}
+  <li class="empty">No feeds yet. Add one above.</li>
+  {{end}}
+</ul>
+{{end}}

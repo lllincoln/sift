@@ -1,0 +1,14 @@
+{{define "content"}}
+<article>
+  <h1>{{.Item.Title}}</h1>
+  <div class="foot article-foot">
+    <p class="meta"><a href="/latest?feed={{.Item.FeedID}}">{{.Item.FeedName}}</a> · {{date .Item.Published}}</p>
+    {{template "vote" (votes .Item.ID .Item.Rating (printf "/article/%d" .Item.ID))}}
+  </div>
+  <div class="body">{{unsafe .Item.Content}}</div>
+</article>
+<div class="pager">
+  <a class="button" href="{{.Item.Link}}">Open original</a>
+  <form method="post" action="/article/{{.Item.ID}}/unread"><button class="button">Keep unread</button></form>
+</div>
+{{end}}

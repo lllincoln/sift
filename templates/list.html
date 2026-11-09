@@ -1,0 +1,43 @@
+{{define "content"}}
+{{if .FeedName}}<h1 class="feed-heading">{{.FeedName}} <a href="/latest" class="clear">All feeds</a></h1>{{end}}
+<div class="toolbar">
+  <div class="tabs">
+    <a href="{{.UnreadURL}}"{{if not .ShowAll}} aria-current="page"{{end}}>Unread</a>
+    <a href="{{.AllURL}}"{{if .ShowAll}} aria-current="page"{{end}}>All</a>
+  </div>
+  <span class="status">{{if .Refreshing}}Refreshing…{{else}}Updated {{ago .Updated}}{{end}}</span>
+</div>
+
+{{if .Items}}
+<ol class="items">
+  {{range .Items}}
+  <li id="item-{{.ID}}"{{if .Read}} class="read"{{end}}>
+    <a class="story" href="/article/{{.ID}}">
+      <span class="story-title">{{.Title}}</span>
+      {{if .Snippet}}<span class="snippet">{{.Snippet}}</span>{{end}}
+    </a>
+    <div class="foot">
+      <div class="meta"><a href="/latest?feed={{.FeedID}}">{{.FeedName}}</a> · {{ago .Published}}</div>
+      {{template "vote" (votes .ID .Rating (printf "%s#item-%d" $.Here .ID))}}
+    </div>
+  </li>
+  {{end}}
+</ol>
+<div class="pager">
+  {{if .OlderURL}}<a class="button" href="{{.OlderURL}}">Older</a>{{end}}
+  {{if and (not .ShowAll) (not .Paged)}}
+  <form method="post" action="/read-all">
+    <input type="hidden" name="upto" value="{{.UpTo}}">
+    {{if .FeedID}}<input type="hidden" name="feed" value="{{.FeedID}}">{{end}}
+    <button class="button">Mark all as read</button>
+  </form>
+  {{end}}
+</div>
+{{else}}
+<p class="empty">
+  {{if .Refreshing}}Fetching your feeds. Reload in a moment.
+  {{else if .ShowAll}}No stories yet.
+  {{else}}You're all caught up.{{end}}
+</p>
+{{end}}
+{{end}}

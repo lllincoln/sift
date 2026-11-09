@@ -1,0 +1,29 @@
+{{define "content"}}
+<h1 class="page-heading">Digest</h1>
+{{if .Items}}
+<p class="lede">Independent writers, standout papers and the biggest news, ranked from {{.Considered}} recent stories.</p>
+<ol class="items digest" start="{{.Start}}">
+  {{range .Items}}
+  <li id="item-{{.ID}}"{{if .Read}} class="read"{{end}}>
+    <a class="story" href="/article/{{.ID}}">
+      <span class="story-title">{{.Title}}</span>
+      {{if .Snippet}}<span class="snippet">{{.Snippet}}</span>{{end}}
+    </a>
+    <div class="foot">
+      <div class="meta"><a href="/latest?feed={{.FeedID}}">{{.FeedName}}</a> · {{ago .Published}}{{if gt .Outlets 1}} · <span class="spread">{{.Outlets}} outlets</span>{{end}}</div>
+      {{template "vote" (votes .ID .Rating (printf "%s#item-%d" $.Here .ID))}}
+    </div>
+  </li>
+  {{end}}
+</ol>
+{{if gt .Pages 1}}
+<nav class="pages" aria-label="Pages">
+  {{if gt .Page 1}}<a class="button" href="{{.PrevURL}}" rel="prev">Newer</a>{{else}}<span></span>{{end}}
+  <span class="meta">Page {{.Page}} of {{.Pages}}</span>
+  {{if lt .Page .Pages}}<a class="button" href="{{.NextURL}}" rel="next">More</a>{{else}}<span></span>{{end}}
+</nav>
+{{end}}
+{{else}}
+<p class="empty">{{if .Refreshing}}Fetching your feeds. Reload in a moment.{{else}}No stories from the last 3 days yet.{{end}}</p>
+{{end}}
+{{end}}

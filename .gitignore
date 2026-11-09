@@ -1,0 +1,4 @@
+/sift
+*.db
+*.db-shm
+*.db-wal

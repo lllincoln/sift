@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<title>{{.Title}} · Sift</title>
+<link rel="stylesheet" href="/style.css">
+<script src="/app.js" defer></script>
+</head>
+<body>
+<header class="top">
+  <nav>
+    <a href="/"{{if eq .Nav "digest"}} aria-current="page"{{end}}>Digest</a>
+    <a href="/latest"{{if eq .Nav "list"}} aria-current="page"{{end}}>Latest</a>
+    <a href="/feeds"{{if eq .Nav "feeds"}} aria-current="page"{{end}}>Feeds</a>
+    <a href="/stats"{{if eq .Nav "stats"}} aria-current="page"{{end}}>Stats</a>
+  </nav>
+  <form method="post" action="/refresh"><button class="link refresh">Refresh</button></form>
+</header>
+<main>
+{{template "content" .}}
+</main>
+</body>
+</html>
+{{define "vote"}}<div class="votes" data-rating="{{.Rating}}">
+  <form class="vote" method="post" action="/article/{{.ID}}/rate"><input type="hidden" name="rating" value="1"><input type="hidden" name="next" value="{{.Next}}"><button class="link" aria-label="Like" title="Like" aria-pressed="{{if eq .Rating 1}}true{{else}}false{{end}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg></button></form>
+  <form class="vote" method="post" action="/article/{{.ID}}/rate"><input type="hidden" name="rating" value="-1"><input type="hidden" name="next" value="{{.Next}}"><button class="link" aria-label="Dislike" title="Dislike" aria-pressed="{{if eq .Rating -1}}true{{else}}false{{end}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg></button></form>
+</div>{{end}}

@@ -1,0 +1,15 @@
+services:
+  sift:
+    image: ghcr.io/lllincoln/sift:latest
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - sift-data:/data
+    # Optional settings, shown with their defaults:
+    # environment:
+    #   REFRESH_MINUTES: "30"
+    #   RETENTION_DAYS: "30"
+
+volumes:
+  sift-data:
